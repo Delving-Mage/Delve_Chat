@@ -1,0 +1,187 @@
+/* Chats.css */
+
+.chat-window {
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: auto; /* Center the chat window */
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chat-header {
+  background-color: #6c5ce7; /* Purple color */
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.chat-header:hover {
+  background-color: #4834d4; /* Darker purple on hover */
+}
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message-container {
+  padding: 10px;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.you-message {
+  justify-content: flex-end;
+}
+
+.other-message {
+  justify-content: flex-start;
+}
+
+.message-content {
+  background-color: #3498db; /* Blue color */
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 70%;
+}
+
+.message-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 10px;
+}
+
+#time {
+  color: #888;
+  font-size: 12px;
+}
+
+#author {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.chat-footer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f5f5f5;
+  transition: background-color 0.3s ease;
+}
+
+.chat-footer:hover {
+  background-color: #dcdde1; /* Light grey on hover */
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+button {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #267bbf; /* Darker blue on hover */
+}
+
+/* Typing Indicator */
+/* .typing-indicator {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+} */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.you-typing .dot {
+  background-color: #3498db; /* Your color for typing dots */
+}
+
+.other-typing .dot {
+  background-color: #e74c3c; /* Opposite user's color for typing dots */
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  animation: scaleUpDown 1.2s infinite ease-in-out;
+}
+
+@keyframes scaleUpDown {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #3498db;
+  border-radius: 50%;
+  margin-right: 5px;
+  animation: scaleUpDown 1.2s infinite ease-in-out;
+}
+
+@keyframes scaleUpDown {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+/* Additional Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
