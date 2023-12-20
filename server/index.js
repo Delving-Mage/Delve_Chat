@@ -19,7 +19,8 @@ const io = new Server(server, {
 
 const typingUsers = {};
 const twilioAccountSid = 'AC6b19bc78b294ab1d2238b7ff3293085b'; // Use environment variable
-const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN; // Use environment variable
+const twilioAuthToken = 'c67f77de8d5785b8cab2d81cfcb98a3f'; // Use environment variable
+const twilioPhoneNumber = '+14155238886';
 const client = require("twilio")(twilioAccountSid, twilioAuthToken);
 
 // Twilio credentials
