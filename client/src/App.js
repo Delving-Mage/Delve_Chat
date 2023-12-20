@@ -1,83 +1,139 @@
-import "./App.css";
-import io from "socket.io-client";
-import { useEffect, useState } from "react";
-import Chat from "./Chats";
+import React, { useEffect, useState } from "react";
+import ScrollToBottom from "react-scroll-to-bottom";
+import "./Chats.css";
 
-const socket = io.connect("https://delve-chat.onrender.com");
+function Chat({ socket, username, room }) {
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [messageList, setMessageList] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingUser, setTypingUser] = useState(null);
 
-function App() {
-  const [username, setUsername] = useState("");
-  const [room, setRoom] = useState("");
-  const [showChat, setShowChat] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
+  const sendMessage = async () => {
+    if (currentMessage.trim() !== "") {
+      const messageData = {
+        room: room,
+        author: username,
+        message: currentMessage,
+        time: `${new Date(Date.now()).getHours()}:${new Date(
+          Date.now()
+        ).getMinutes()}`,
+      };
 
-  useEffect(() => {
-    // Attempt to get the user's location
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // Successfully obtained the location
-          const { latitude, longitude } = position.coords;
-          setUserLocation({ latitude, longitude });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported");
-    }
-  }, []);
-
-  useEffect(() => {
-    // Listen for the "network_interfaces" event
-    socket.on("network_interfaces", (data) => {
-      console.log("Network Interfaces:", data);
-    });
-
-    return () => {
-      // Clean up the event listener on component unmount
-      socket.off("network_interfaces");
-    };
-  }, []);
-  const joinRoom = () => {
-    if (username !== "" && room !== "") {
-      socket.emit("join_room", room);
-      setShowChat(true);
+      await socket?.emit("send_message", messageData);
+      if (socket && !socket.error) {
+        setMessageList((list) => [...list, messageData]);
+      }
+      setCurrentMessage("");
+      setIsTyping(false);
+      setTypingUser(null);
     }
   };
+  
+
+  const handleTyping = () => {
+    if (currentMessage.trim() !== "" && !isTyping) {
+      // Notify server that the user is typing
+      socket.emit("typing", { room, username });
+      setIsTyping(true);
+      setTypingUser(username);
+    } else if (currentMessage.trim() === "" && isTyping) {
+      // Notify server that the user stopped typing
+      socket.emit("stopped_typing", { room, username });
+      setIsTyping(false);
+      setTypingUser(null);
+    }
+  };
+useEffect(() => {
+  socket?.on("typing", (data) => {
+    if (data.room === room && data.username !== username) {
+      setIsTyping(true);
+      setTypingUser(data.username);
+    }
+  });
+});
+  useEffect(() => {
+    socket?.on("receive_message", (data) => {
+      if (data.author !== username) {
+        setMessageList((list) => [...list, data]);
+      }
+      setIsTyping(false);
+      setTypingUser(null);
+    });
+
+    // Listen for stopped typing events from other users
+    socket?.on("stopped_typing", (data) => {
+      if (data.room === room && data.username !== username) {
+        setIsTyping(false);
+        setTypingUser(null);
+      }
+    });
+  }, [socket, username, room]);
+
+
+  useEffect(() => {
+    return () => {
+      socket?.off("receive_message");
+      socket?.off("typing");
+      socket?.off("stopped_typing");
+    };
+  }, [socket]);
 
   return (
-    <div className="App">
-      {!showChat ? (
-        <div className="joinChatContainer">
-          <h3>Join A Chat</h3>
-          <input
-            type="text"
-            placeholder="John..."
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-          />
-          <input
-            type="text"
-            placeholder="Room ID..."
-            onChange={(event) => {
-              setRoom(event.target.value);
-            }}
-          />
-          <button onClick={joinRoom}>Join A Room</button>
-           {userLocation && (
-            <p>
-              Your current location: {userLocation.latitude}, {userLocation.longitude}
-            </p>
+    <div className="chat-window">
+      <div className="chat-header">
+        <p>Live Chat</p>
+      </div>
+      <div className="chat-body">
+        <ScrollToBottom className="message-container">
+          {messageList.map((messageContent, index) => {
+            const isYou = username === messageContent.author;
+            const messageClass = isYou ? "you-message" : "other-message";
+            const messageAlign = isYou ? "flex-end" : "flex-start";
+
+            return (
+              <div
+                key={index}
+                className={`message ${messageClass}`}
+                style={{ justifyContent: messageAlign }}
+              >
+                <div>
+                  <div className="message-content">
+                    <p>{messageContent.message}</p>
+                  </div>
+                  <div className="message-meta">
+                    <p id="time">{messageContent.time}</p>
+                    <p id="author">{messageContent.author}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+         {isTyping && typingUser !== username && (
+          <div className={`typing-indicator ${typingUser === username ? 'other-typing' : 'you-typing'}`}>
+          <div className="dot"></div>
+              <div className="dot"></div>
+              <div className="dot"></div>
+            </div>
           )}
-        </div>
-      ) : (
-        <Chat socket={socket} username={username} room={room} />
-      )}
+        </ScrollToBottom>
+      </div>
+      <div className="chat-footer">
+        <input
+          type="text"
+          value={currentMessage}
+          placeholder="Hey..."
+          onChange={(event) => {
+            setCurrentMessage(event.target.value);
+            handleTyping();
+          }}
+          onKeyPress={(event) => {
+            event.key === "Enter" && sendMessage();
+          }}
+        />
+        <button onClick={sendMessage}>&#9658;</button>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default Chat;
