@@ -2,7 +2,6 @@ import "./App.css";
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import Chat from "./Chats";
-import UserCount from './UserCount';
 
 const socket = io.connect("https://delve-chat.onrender.com");
 
