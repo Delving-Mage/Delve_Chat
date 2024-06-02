@@ -40,10 +40,36 @@ function App() {
       socket.off("network_interfaces");
     };
   }, []);
+
   const joinRoom = () => {
     if (username !== "" && room !== "") {
-      // socket.emit("join_room", room);
+      socket.emit("join_room", room);
       setShowChat(true);
+    }
+  };
+
+  const getRoomShareLink = () => {
+    if (room !== "") {
+      // Construct the shareable link
+      return `${window.location.origin}?room=${room}`;
+    }
+    return "";
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: "Join my chat room",
+      text: `Join my chat room with room ID ${room}`,
+      url: getRoomShareLink(),
+    };
+
+    try {
+      await navigator.share(shareData);
+      console.log("Successfully shared");
+    } catch (error) {
+      console.error("Error sharing:", error);
+      // Fallback for unsupported platforms
+      alert("Sharing is not supported on this platform.");
     }
   };
 
@@ -54,7 +80,7 @@ function App() {
           <h3>Join A Chat</h3>
           <input
             type="text"
-            placeholder="Name..."
+            placeholder="John..."
             onChange={(event) => {
               setUsername(event.target.value);
             }}
@@ -67,11 +93,12 @@ function App() {
             }}
           />
           <button onClick={joinRoom}>Join A Room</button>
-           {userLocation && (
+          {userLocation && (
             <p>
               Your current location: {userLocation.latitude}, {userLocation.longitude}
             </p>
           )}
+          <button onClick={handleShare}>Share</button>
         </div>
       ) : (
         <Chat socket={socket} username={username} room={room} />
