@@ -67,7 +67,7 @@
 }
 
 .message-content {
-  background-color: #3498db; /* Blue color */
+  background-color: #f0f0f0; /* Blue color */
   color: #fff;
   padding: 10px;
   border-radius: 8px;
@@ -184,4 +184,11 @@ button:hover {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+}
+
+
+.chat-image {
+  max-width: 200px; /* Adjust as needed */
+  max-height: 200px; /* Adjust as needed */
+  border-radius: 10px;
 }
