@@ -38,6 +38,8 @@ function Chat({ socket, username, room }) {
     if (event.key === "Enter") sendMessage();
   };
 
+  
+
   return (
     <div className="chat-window">
       <div className="chat-header">
