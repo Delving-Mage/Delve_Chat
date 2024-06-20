@@ -8,7 +8,6 @@ function App() {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
-  // const [userLocation, setUserLocation] = useState(null);
   const [iframeUrl, setIframeUrl] = useState("");
   const [iframeUrl1, setIframeUrl1] = useState("");
 
@@ -77,11 +76,7 @@ function App() {
             }}
           />
           <button onClick={joinRoom}>Join A Room</button>
-          // {userLocation && (
-          //   <p>
-          //     Your current location: {userLocation.latitude}, {userLocation.longitude}
-          //   </p>
-          // )}
+         
           <button onClick={handleShare}>Share</button>
         </div>
       ) : (
