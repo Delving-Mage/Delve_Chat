@@ -9,39 +9,15 @@ function App() {
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
-
-  useEffect(() => {
-    // Attempt to get the user's location
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // Successfully obtained the location
-          const { latitude, longitude } = position.coords;
-          setUserLocation({ latitude, longitude });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported");
-    }
-  }, []);
-
-  useEffect(() => {
-    // Listen for the "network_interfaces" event
-    socket.on("network_interfaces", (data) => {
-      console.log("Network Interfaces:", data);
-    });
-
-    return () => {
-      // Clean up the event listener on component unmount
-      socket.off("network_interfaces");
-    };
-  }, []);
+  const [iframeUrl, setIframeUrl] = useState("");
+  const [iframeUrl1, setIframeUrl1] = useState("");
 
   const joinRoom = () => {
-    if (username !== "" && room !== "") {
+    // Generate a random username if none is provided
+    const randomUsername = `User${Math.floor(Math.random() * 1000)}`;
+    setUsername(username || randomUsername);
+
+    if (room !== "") {
       socket.emit("join_room", room);
       setShowChat(true);
     }
@@ -72,6 +48,15 @@ function App() {
     }
   };
 
+  const handleIframeUrlChange = (event) => {
+    setIframeUrl(event.target.value);
+    socket.emit("iframe_url", { room, url: event.target.value });
+  };
+  const handleIframeUrlChange1 = (event) => {
+    setIframeUrl1(event.target.value);
+    socket.emit("iframe_url", { room, url: event.target.value });
+  };
+
   return (
     <div className="App">
       {!showChat ? (
@@ -100,10 +85,42 @@ function App() {
           <button onClick={handleShare}>Share</button>
         </div>
       ) : (
-        <Chat socket={socket} username={username} room={room} />
+        <div style={{display:"flex"}}>
+          <div className="iframe-container">
+            <input
+              type="text"
+              placeholder="Enter website URL..."
+              value={iframeUrl}
+              onChange={handleIframeUrlChange}
+            />
+            <iframe
+              src={iframeUrl}
+              width="100%"
+              height="600px"
+              style={{ border: "none" }}
+              title="Embedded Website"
+            ></iframe>
+          </div>
+          <Chat socket={socket} username={username} room={room} />
+          <div className="iframe-container">
+            <input
+              type="text"
+              placeholder="Enter website URL..."
+              value={iframeUrl1}
+              onChange={handleIframeUrlChange1}
+            />
+            <iframe
+              src={iframeUrl1}
+              width="100%"
+              height="600px"
+              style={{ border: "none" }}
+              title="Embedded Website"
+            ></iframe>
+          </div>
+        </div>
       )}
     </div>
-  );
+);
 }
 
 export default App;
