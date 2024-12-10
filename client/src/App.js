@@ -8,7 +8,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
-  const [iframeUrl, setIframeUrl] = useState("https://www.youtube.com/embed/VREeK0E5mRI?si=omTVm45qevz80XJz");
+  const [iframeUrl, setIframeUrl] = useState("https://youtu.be/2B9FdXWsz7s?si=jhLiRSvRCESUC4mp");
   const [iframeUrl1, setIframeUrl1] = useState("");
 
   const joinRoom = () => {
