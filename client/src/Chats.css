@@ -67,9 +67,9 @@
 }
 
 .message-content {
-  background-color: #f0f0f0; /* Blue color */
+  background-color: rebeccapurple; /* Blue color */
   color: #fff;
-  padding: 10px;
+  padding: 5px;
   border-radius: 8px;
   max-width: 70%;
 }
